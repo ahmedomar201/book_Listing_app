@@ -2,14 +2,28 @@ abstract class AppState {}
 
 class Empty extends AppState {}
 
-class GetWeatherLoading extends AppState {}
+class GetBooksLoading extends AppState {}
 
-class GetWeatherSuccess extends AppState {}
+class GetBooksSuccess extends AppState {}
 
-class GetWeatherError extends AppState {
+class GetBooksError extends AppState {
   final String error;
-  GetWeatherError({
+  GetBooksError({
     required this.error,
   });
 }
 
+
+
+class GetBooksSearchLoading extends AppState {}
+
+class GetBooksSearchSuccess extends AppState {}
+
+class GetBooksSearchError extends AppState {
+  final String error;
+  GetBooksSearchError({
+    required this.error,
+  });
+}
+
+class GetBooksPaginationSuccess  extends AppState {}

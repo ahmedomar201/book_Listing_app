@@ -2,11 +2,13 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/error/exceptions.dart';
-import '../models/weather_model.dart';
+import '../models/book_model.dart';
 import '../remote/dio_helper.dart';
 
 abstract class Repository {
-  Future<Either<String, WeatherModel>> getWeather(String city);
+  Future<Either<String, BookModel>> getBooks(int page);
+
+  Future<Either<String, BookModel>> getBookSearch(String name);
 }
 
 class RepoImplementation extends Repository {
@@ -15,14 +17,28 @@ class RepoImplementation extends Repository {
   RepoImplementation({required this.dioHelper});
 
   @override
-  Future<Either<String, WeatherModel>> getWeather(String city) async {
-    return basicErrorHandling<WeatherModel>(
+  Future<Either<String, BookModel>> getBooks(int page) async {
+    return basicErrorHandling<BookModel>(
       onSuccess: () async {
-        var response = await dioHelper.get(
-          url: "q=$city&appid=9df2ee6d219add56a3b0cf85a0a12c05&units=metric",
-        );
-        debugPrint('getWeather reponse =====> ${response.data}');
-        return WeatherModel.fromJson(response.data);
+        var response = await dioHelper.get(url: "?page=$page");
+        debugPrint('getBooks reponse =====> ${response.data}');
+        return BookModel.fromJson(response.data);
+      },
+      onServerError: (exception) async {
+        debugPrint(exception.message);
+        debugPrint(exception.code.toString());
+        return exception.message;
+      },
+    );
+  }
+
+  @override
+  Future<Either<String, BookModel>> getBookSearch(String name) async {
+    return basicErrorHandling<BookModel>(
+      onSuccess: () async {
+        var response = await dioHelper.get(url: "/?search=$name");
+        debugPrint('getBookSearch reponse =====> ${response.data}');
+        return BookModel.fromJson(response.data);
       },
       onServerError: (exception) async {
         debugPrint(exception.message);

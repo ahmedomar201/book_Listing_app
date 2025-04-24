@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dataLayer/cubit/app_cubit.dart';
-import 'presentationLayer/screens/splash_screen.dart';
 import 'core/utils/constansts.dart';
 import 'core/utils/injection.dart'as di;
 import 'core/utils/injection.dart';
+import 'presentationLayer/screens/book_list_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
          navigatorKey: navigatorKey,
          debugShowCheckedModeBanner: false,
-        home:const SplashScreen(),
+        home:const BookListScreen(),
       ),
     );
   }
