@@ -10,7 +10,11 @@ AppBloc get cubit => AppBloc.get(navigatorKey.currentContext!);
 class AppBloc extends Cubit<AppState> {
   final Repository repo;
 
-  AppBloc({required Repository repository}) : repo = repository, super(Empty());
+  AppBloc({required Repository repository})
+    : repo = repository,
+      super(Empty()) {
+    getBooks();
+  }
 
   static AppBloc get(context) => BlocProvider.of(context);
 
@@ -18,52 +22,53 @@ class AppBloc extends Cubit<AppState> {
   BookModel? books;
   int page = 1;
   bool isLoadingMore = false;
-bool hasMoreData = true;
-List<Results> allBooks = [];
+  bool hasMoreData = true;
+  List<Results> allBooks = [];
 
+  void getBooks({bool isPagination = false}) async {
+    if (isPagination) {
+      if (isLoadingMore || !hasMoreData) return;
+      isLoadingMore = true;
+      emit(GetBooksPaginationLoading());
+    } else {
+      emit(GetBooksLoading());
+      allBooks.clear();
+      page = 1;
+      hasMoreData = true;
+    }
 
+    final result = await repo.getBooks(page);
 
-void getBooks({bool isPagination = false}) async {
-  if (isPagination) {
-    if (isLoadingMore || !hasMoreData) return;
-    isLoadingMore = true;
-  } else {
-    emit(GetBooksLoading());
-    allBooks.clear();
-    page = 1;
-    hasMoreData = true;
+    result.fold(
+      (failure) {
+        isLoadingMore = false;
+        if (isPagination) {
+
+          emit(GetBooksPaginationError(error: failure));
+        } else {
+
+          emit(GetBooksError(error: failure));
+        }
+      },
+      (data) {
+        if (data.results != null && data.results!.isNotEmpty) {
+          allBooks.addAll(data.results!);
+          page++;
+        } else {
+          hasMoreData = false;
+        }
+
+        books = data;
+        isLoadingMore = false;
+
+        if (isPagination) {
+          emit(GetBooksPaginationSuccess());
+        } else {
+          emit(GetBooksSuccess());
+        }
+      },
+    );
   }
-
-  final result = await repo.getBooks(page);
-
-  result.fold(
-    (failure) {
-      if (isPagination) {
-        isLoadingMore = false;
-      } else {
-        emit(GetBooksError(error: failure));
-      }
-    },
-    (data) {
-      if (data.results != null && data.results!.isNotEmpty) {
-        allBooks.addAll(data.results!);
-        page++;
-      } else {
-        hasMoreData = false;
-      }
-
-      books = data;
-
-      if (isPagination) {
-        isLoadingMore = false;
-        emit(GetBooksPaginationSuccess());
-      } else {
-        emit(GetBooksSuccess());
-      }
-    },
-  );
-}
-
 
   void getBooksSearch() async {
     emit(GetBooksSearchLoading());
@@ -77,6 +82,7 @@ void getBooks({bool isPagination = false}) async {
       },
       (data) {
         books = data;
+        allBooks = data.results ?? [];
         emit(GetBooksSearchSuccess());
       },
     );

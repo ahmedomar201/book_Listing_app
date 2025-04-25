@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-
 import '../../../core/error/exceptions.dart';
 import '../models/book_model.dart';
 import '../remote/dio_helper.dart';
@@ -31,7 +30,6 @@ class RepoImplementation extends Repository {
       },
     );
   }
-
   @override
   Future<Either<String, BookModel>> getBookSearch(String name) async {
     return basicErrorHandling<BookModel>(

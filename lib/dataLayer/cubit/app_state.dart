@@ -27,3 +27,12 @@ class GetBooksSearchError extends AppState {
 }
 
 class GetBooksPaginationSuccess  extends AppState {}
+
+class GetBooksPaginationLoading  extends AppState {}
+
+class GetBooksPaginationError extends AppState {
+  final String error;
+  GetBooksPaginationError({
+    required this.error,
+  });
+}
