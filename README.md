@@ -38,8 +38,7 @@ flutter run
 ## Project Structure
 
 - `lib/`: Contains the Flutter app code.
-- `test/`: Contains unit and widget tests.
-
+- 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
