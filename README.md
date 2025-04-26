@@ -37,8 +37,34 @@ flutter run
 
 ## Project Structure
 
-- `lib/`: Contains the Flutter app code
-   
+- `lib/`: Contains the Flutter app code.
+
+## Features ✨
+- Browse books with infinite scroll.
+- Search books by title/author.
+- Expand/Collapse book summaries.
+- Error handling for network issues.
+- Clean Architecture (Cubit for state management).
+
+## Libraries Used 🛠️
+- flutter_bloc
+- Dio
+- cached_network_image
+- get_it
+- flutter_svg
+- dartz
+- flutter_native_splash
+
+
+## Design Decisions 🧠
+- **Cubit** was chosen for lightweight and easy state management.
+- **Repository pattern** used to separate data handling and UI logic.
+- **Clean architecture** to maintain scalability and testing ease.
+- API errors and empty fields are handled gracefully.
+
+## Notes 📋
+- The app is responsive across devices.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
