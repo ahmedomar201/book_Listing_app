@@ -7,7 +7,7 @@ import '../remote/dio_helper.dart';
 abstract class Repository {
   Future<Either<String, BookModel>> getBooks(int page);
 
-  Future<Either<String, BookModel>> getBookSearch(String name);
+  Future<Either<String, BookModel>> getBookSearch(String name,int page);
 }
 
 class RepoImplementation extends Repository {
@@ -31,10 +31,10 @@ class RepoImplementation extends Repository {
     );
   }
   @override
-  Future<Either<String, BookModel>> getBookSearch(String name) async {
+  Future<Either<String, BookModel>> getBookSearch(String name,int page) async {
     return basicErrorHandling<BookModel>(
       onSuccess: () async {
-        var response = await dioHelper.get(url: "/?search=$name");
+        var response = await dioHelper.get(url: "?search=$name&page=$page");
         debugPrint('getBookSearch reponse =====> ${response.data}');
         return BookModel.fromJson(response.data);
       },

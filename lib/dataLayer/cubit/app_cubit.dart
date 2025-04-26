@@ -1,6 +1,7 @@
 import 'package:book_list_app/dataLayer/cubit/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_storage/get_storage.dart' show GetStorage;
 import '../../core/utils/constansts.dart';
 import '../networks/models/book_model.dart';
 import '../networks/repository/repository.dart';
@@ -18,14 +19,17 @@ class AppBloc extends Cubit<AppState> {
 
   static AppBloc get(context) => BlocProvider.of(context);
 
+  // GetStorage prefs = GetStorage();
+
   TextEditingController nameBookController = TextEditingController();
   BookModel? books;
   int page = 1;
   bool isLoadingMore = false;
   bool hasMoreData = true;
   List<Results> allBooks = [];
+  bool isSearching = false;
 
-  void getBooks({bool isPagination = false}) async {
+  void getBooks({bool isPagination = false, context}) async {
     if (isPagination) {
       if (isLoadingMore || !hasMoreData) return;
       isLoadingMore = true;
@@ -43,10 +47,8 @@ class AppBloc extends Cubit<AppState> {
       (failure) {
         isLoadingMore = false;
         if (isPagination) {
-
           emit(GetBooksPaginationError(error: failure));
         } else {
-
           emit(GetBooksError(error: failure));
         }
       },
@@ -70,21 +72,57 @@ class AppBloc extends Cubit<AppState> {
     );
   }
 
-  void getBooksSearch() async {
-    emit(GetBooksSearchLoading());
+  void searchBooks({bool isPagination = false, context}) async {
+    if (nameBookController.text.isEmpty) {
+      getBooks();
+      return;
+    }
 
-    final result = await repo.getBookSearch(nameBookController.text);
+    if (isPagination) {
+      if (isLoadingMore || !hasMoreData) return;
+      isLoadingMore = true;
+      emit(GetBooksPaginationLoading());
+    } else {
+      emit(GetBooksSearchLoading());
+      allBooks.clear();
+      page = 1;
+      hasMoreData = true;
+    }
+
+    final result = await repo.getBookSearch(nameBookController.text, page);
 
     result.fold(
       (failure) {
-        debugPrint('-----failure------$failure');
-        emit(GetBooksSearchError(error: failure));
+        isLoadingMore = false;
+        if (isPagination) {
+          emit(GetBooksPaginationError(error: failure));
+        } else {
+          emit(GetBooksSearchError(error: failure));
+        }
       },
       (data) {
+        if (data.results != null && data.results!.isNotEmpty) {
+          allBooks.addAll(data.results!);
+          page++;
+        } else {
+          hasMoreData = false;
+        }
+
         books = data;
-        allBooks = data.results ?? [];
-        emit(GetBooksSearchSuccess());
+        isLoadingMore = false;
+
+        if (isPagination) {
+          emit(GetBooksPaginationSuccess());
+        } else {
+          emit(GetBooksSearchSuccess());
+        }
       },
     );
+  }
+
+  void onSearchSubmitted(String value) {
+    nameBookController.text = value.trim();
+    isSearching = nameBookController.text.isNotEmpty;
+    searchBooks();
   }
 }
