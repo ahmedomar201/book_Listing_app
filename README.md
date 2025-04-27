@@ -49,7 +49,6 @@ flutter run
 ## Bonus Feature (Optional) 🌟
 - **Offline Caching**:  
   - Implemented offline mode by caching the fetched book data.
-  - Cached both general book list and search results.
   - If the device is offline or an API request fails, the app displays the relevant cached data seamlessly.
 
 ## Libraries Used 🛠️
