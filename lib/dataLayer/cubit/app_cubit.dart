@@ -1,7 +1,6 @@
 import 'package:book_list_app/dataLayer/cubit/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_storage/get_storage.dart' show GetStorage;
 import '../../core/utils/constansts.dart';
 import '../networks/models/book_model.dart';
 import '../networks/repository/repository.dart';
@@ -19,7 +18,6 @@ class AppBloc extends Cubit<AppState> {
 
   static AppBloc get(context) => BlocProvider.of(context);
 
-  // GetStorage prefs = GetStorage();
 
   TextEditingController nameBookController = TextEditingController();
   BookModel? books;
